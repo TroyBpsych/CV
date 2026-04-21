@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charter School Enrollment: Extended Central Valley (Kern to Redding)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: #0d1117; color: #e6edf3; line-height: 1.6; }
+
+  .header {
+    background: #0d1117;
+    border-bottom: 1px solid #21262d;
+    padding: 44px 40px 36px;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #58a6ff 0%, #3fb950 35%, #d29922 65%, #f85149 100%);
+  }
+  .header-badge {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8b949e;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+    color: #f0f6fc;
+  }
+  .header .subtitle { font-size: 13px; color: #8b949e; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 28px 20px 52px; }
+
+  .section-label {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #58a6ff;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section { margin-bottom: 36px; }
+  p { font-size: 13.5px; line-height: 1.8; color: #c9d1d9; margin-bottom: 12px; }
+
+  /* Region header strips */
+  .region-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin: 18px 0 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .strip-north { background: rgba(248,81,73,0.08); border-left: 3px solid #f85149; color: #f85149; }
+  .strip-north-cv { background: rgba(210,153,34,0.08); border-left: 3px solid #d29922; color: #d29922; }
+  .strip-sacvalley { background: rgba(88,166,255,0.08); border-left: 3px solid #388bfd; color: #79c0ff; }
+  .strip-sjvalley { background: rgba(63,185,80,0.08); border-left: 3px solid #3fb950; color: #3fb950; }
+  .strip-compare { background: rgba(139,148,158,0.08); border-left: 3px solid #8b949e; color: #8b949e; }
+
+  /* Main table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th {
+    text-align: left;
+    padding: 8px 10px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    color: #8b949e;
+    font-family: 'Courier New', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .data-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #161b22;
+    vertical-align: middle;
+  }
+  .data-table tr:hover td { background: rgba(88,166,255,0.03); }
+  .county-name { font-weight: 600; color: #e6edf3; font-size: 12.5px; }
+  .county-sub { font-size: 10px; color: #6e7681; margin-top: 1px; }
+
+  .region-pill {
+    display: inline-block;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .pill-north { background: rgba(248,81,73,0.12); color: #f85149; border: 1px solid rgba(248,81,73,0.25); }
+  .pill-ncv { background: rgba(210,153,34,0.1); color: #d29922; border: 1px solid rgba(210,153,34,0.25); }
+  .pill-sac { background: rgba(88,166,255,0.1); color: #79c0ff; border: 1px solid rgba(88,166,255,0.25); }
+  .pill-sjv { background: rgba(63,185,80,0.1); color: #3fb950; border: 1px solid rgba(63,185,80,0.25); }
+  .pill-compare { background: rgba(139,148,158,0.1); color: #8b949e; border: 1px solid rgba(139,148,158,0.2); }
+
+  .enroll-cell { font-family: 'Courier New', monospace; color: #8b949e; font-size: 11.5px; }
+  .charter-cell { font-family: 'Courier New', monospace; color: #8b949e; font-size: 11.5px; }
+
+  /* Bar + pct combo */
+  .pct-wrap { display: flex; align-items: center; gap: 8px; }
+  .bar-mini { width: 70px; height: 7px; background: #21262d; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .pct-num { font-family: 'Courier New', monospace; font-weight: 700; font-size: 12px; white-space: nowrap; }
+
+  /* color tiers */
+  .t-vhi { background: #58a6ff; }  /* >20% */
+  .t-hi  { background: #3fb950; }  /* 12-20% */
+  .t-mid { background: #d29922; }  /* 7-12% */
+  .t-lo  { background: #db6d28; }  /* 4-7% */
+  .t-xlo { background: #f85149; }  /* <4% */
+
+  .c-vhi { color: #58a6ff; }
+  .c-hi  { color: #3fb950; }
+  .c-mid { color: #d29922; }
+  .c-lo  { color: #db6d28; }
+  .c-xlo { color: #f85149; }
+
+  .trend-badge {
+    display: inline-block; font-size: 9.5px; padding: 2px 6px; border-radius: 3px;
+    font-family: 'Courier New', monospace; font-weight: 700;
+  }
+  .t-up   { background: rgba(63,185,80,0.1);   color: #3fb950; border: 1px solid rgba(63,185,80,0.25); }
+  .t-up3  { background: rgba(63,185,80,0.18);  color: #3fb950; border: 1px solid rgba(63,185,80,0.35); }
+  .t-flat { background: rgba(139,148,158,0.1); color: #8b949e; border: 1px solid rgba(139,148,158,0.2); }
+  .t-dn   { background: rgba(248,81,73,0.08);  color: #f85149; border: 1px solid rgba(248,81,73,0.2); }
+
+  .avg-row td { background: #1c2128 !important; border-top: 1px solid #30363d; border-bottom: 1px solid #30363d; }
+  .avg-row td:first-child { font-style: italic; color: #8b949e; }
+
+  /* Metrics bar */
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-bottom: 20px; }
+  .m-card { background: #161b22; border: 1px solid #21262d; border-radius: 6px; padding: 12px 14px; }
+  .m-label { font-size: 10px; color: #6e7681; font-family: 'Courier New', monospace; margin-bottom: 3px; }
+  .m-val { font-size: 20px; font-weight: 700; color: #f0f6fc; line-height: 1.1; }
+  .m-sub { font-size: 10px; color: #6e7681; margin-top: 3px; }
+
+  /* Legend */
+  .legend-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8b949e; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* Notes */
+  .note { font-size: 10.5px; color: #6e7681; font-family: 'Courier New', monospace; line-height: 1.7; padding: 14px; background: #161b22; border: 1px solid #21262d; border-radius: 6px; margin-top: 20px; }
+
+  .divider { height: 1px; background: #21262d; margin: 24px 0; }
+
+  /* Key finding box */
+  .finding { background: #161b22; border: 1px solid #21262d; border-left: 3px solid #3fb950; border-radius: 6px; padding: 14px 18px; margin-bottom: 14px; }
+  .finding h3 { font-size: 12px; font-weight: 600; color: #3fb950; font-family: 'Courier New', monospace; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .finding p { font-size: 12.5px; color: #c9d1d9; margin-bottom: 0; }
+
+  @media (max-width: 640px) {
+    .header { padding: 28px 16px 24px; }
+    .container { padding: 16px 12px 36px; }
+    .data-table th, .data-table td { padding: 6px 7px; }
+    .bar-mini { width: 40px; }
+    .metrics-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-badge">Charter Enrollment Analysis · 2024–25 · Extended Central Valley (Redding to Kern)</span>
+  <h1>Charter School Enrollment by County &amp; District</h1>
+  <div class="subtitle">Full corridor from Shasta County (Redding) south through Kern County — compared with major California regions</div>
+</div>
+
+<div class="container">
+
+  <!-- Statewide metrics -->
+  <div class="section">
+    <div class="section-label">Statewide Benchmarks</div>
+    <div class="metrics-row">
+      <div class="m-card">
+        <div class="m-label">CA charter share</div>
+        <div class="m-val" style="color:#58a6ff;">~12.5%</div>
+        <div class="m-sub">of 5.8M public students</div>
+      </div>
+      <div class="m-card">
+        <div class="m-label">Charter students statewide</div>
+        <div class="m-val">~725K</div>
+        <div class="m-sub">2024–25 estimate</div>
+      </div>
+      <div class="m-card">
+        <div class="m-label">Active charter schools</div>
+        <div class="m-val">1,283</div>
+        <div class="m-sub">as of May 2024</div>
+      </div>
+      <div class="m-card">
+        <div class="m-label">Extended CV total enrollment</div>
+        <div class="m-val">~1.1M</div>
+        <div class="m-sub">Shasta → Kern, all counties</div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="leg-item"><div class="leg-dot" style="background:#58a6ff;"></div>&gt;20% — Very high</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#3fb950;"></div>12–20% — Above avg</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#d29922;"></div>7–12% — Near avg</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#db6d28;"></div>4–7% — Below avg</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f85149;"></div>&lt;4% — Low</div>
+    </div>
+  </div>
+
+  <!-- MASTER TABLE -->
+  <div class="section">
+    <div class="section-label">Complete County-by-County Table — Redding (Shasta) to Kern</div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:200px;">County</th>
+          <th>Sub-region</th>
+          <th>Total Enrollment</th>
+          <th>Est. Charter Students</th>
+          <th style="min-width:140px;">Charter % (bar)</th>
+          <th>10-yr Trend</th>
+          <th>Notable Charter Context</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- ─── NORTH STATE ─── -->
+        <tr><td colspan="7" style="padding:0;">
+          <div class="region-strip strip-north">⬆ North State (Redding / Upper Sacramento Valley)</div>
+        </td></tr>
+
+        <tr>
+          <td><div class="county-name">Shasta</div><div class="county-sub">Redding, Anderson, Palo Cedro</div></td>
+          <td><span class="region-pill pill-north">North State</span></td>
+          <td class="enroll-cell">26,588</td>
+          <td class="charter-cell">~2,900</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-mid" style="width:87%;"></div></div>
+              <span class="pct-num c-mid">~11%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Growing</span></td>
+          <td style="font-size:11px;color:#8b949e;">10+ charters incl. Shasta Charter Academy, Phoenix Charter, Redding STEM, Enterprise Prep; many independent-study models</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Tehama</div><div class="county-sub">Red Bluff, Corning</div></td>
+          <td><span class="region-pill pill-north">North State</span></td>
+          <td class="enroll-cell">10,738</td>
+          <td class="charter-cell">~600</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:46%;"></div></div>
+              <span class="pct-num c-lo">~6%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Small rural county; served by some multi-county independent study charters (Phoenix Charter, Corning Union charters)</td>
+        </tr>
+
+        <!-- ─── NORTHERN CENTRAL VALLEY ─── -->
+        <tr><td colspan="7" style="padding:0;">
+          <div class="region-strip strip-north-cv">⬇ Northern Sacramento Valley</div>
+        </td></tr>
+
+        <tr>
+          <td><div class="county-name">Butte</div><div class="county-sub">Chico, Oroville, Paradise</div></td>
+          <td><span class="region-pill pill-ncv">N. Sac Valley</span></td>
+          <td class="enroll-cell">~29,900</td>
+          <td class="charter-cell">~3,400</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-mid" style="width:91%;"></div></div>
+              <span class="pct-num c-mid">~11%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Growing</span></td>
+          <td style="font-size:11px;color:#8b949e;">Paradise charter rebuild post-Camp Fire boosted numbers; Chico has several classroom-based charters; CSUCHICO-linked programs</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Glenn</div><div class="county-sub">Willows, Orland</div></td>
+          <td><span class="region-pill pill-ncv">N. Sac Valley</span></td>
+          <td class="enroll-cell">~6,500</td>
+          <td class="charter-cell">~200</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-xlo" style="width:23%;"></div></div>
+              <span class="pct-num c-xlo">~3%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Very small rural county; few active charters; primarily served by multi-county IS charters</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Colusa</div><div class="county-sub">Colusa, Williams</div></td>
+          <td><span class="region-pill pill-ncv">N. Sac Valley</span></td>
+          <td class="enroll-cell">4,613</td>
+          <td class="charter-cell">~120</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-xlo" style="width:19%;"></div></div>
+              <span class="pct-num c-xlo">~2.5%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Smallest CV county by enrollment; agricultural community; near-zero local charter presence</td>
+        </tr>
+
+        <!-- ─── SACRAMENTO METRO ─── -->
+        <tr><td colspan="7" style="padding:0;">
+          <div class="region-strip strip-sacvalley">⬇ Sacramento Metro Region</div>
+        </td></tr>
+
+        <tr>
+          <td><div class="county-name">Sutter</div><div class="county-sub">Yuba City, Live Oak</div></td>
+          <td><span class="region-pill pill-sac">Sac Metro</span></td>
+          <td class="enroll-cell">~25,000</td>
+          <td class="charter-cell">~1,500</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:46%;"></div></div>
+              <span class="pct-num c-lo">~6%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Modest</span></td>
+          <td style="font-size:11px;color:#8b949e;">Growing suburb of Sacramento; Yuba City Unified is the dominant district; some IS charters serve the area</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Yuba</div><div class="county-sub">Marysville, Wheatland</div></td>
+          <td><span class="region-pill pill-sac">Sac Metro</span></td>
+          <td class="enroll-cell">~16,200</td>
+          <td class="charter-cell">~1,100</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:54%;"></div></div>
+              <span class="pct-num c-lo">~7%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Growing</span></td>
+          <td style="font-size:11px;color:#8b949e;">Camptonville Academy (multi-county IS); Yuba charter growth driven by suburban development and IS models</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Placer</div><div class="county-sub">Roseville, Rocklin, Auburn</div></td>
+          <td><span class="region-pill pill-sac">Sac Metro</span></td>
+          <td class="enroll-cell">77,048</td>
+          <td class="charter-cell">~8,500</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-mid" style="width:87%;"></div></div>
+              <span class="pct-num c-mid">~11%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ Strong</span></td>
+          <td style="font-size:11px;color:#8b949e;">Fast-growing suburban county; Rocklin Academy, Horizon Charter, and multiple IS charters thrive; affluent district-competition dynamic</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Yolo</div><div class="county-sub">Davis, Woodland, West Sacramento</div></td>
+          <td><span class="region-pill pill-sac">Sac Metro</span></td>
+          <td class="enroll-cell">29,590</td>
+          <td class="charter-cell">~2,600</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-mid" style="width:67%;"></div></div>
+              <span class="pct-num c-mid">~9%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Modest</span></td>
+          <td style="font-size:11px;color:#8b949e;">Davis Joint USD and West Sac charters; Choices Charter; UC Davis pipeline supports experimental charter models</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">★ Sacramento</div><div class="county-sub">Sacramento, Elk Grove, Natomas</div></td>
+          <td><span class="region-pill pill-sac">Sac Metro</span></td>
+          <td class="enroll-cell">258,235</td>
+          <td class="charter-cell">~40,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-hi" style="width:100%;"></div></div>
+              <span class="pct-num c-hi">~16%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ Strong</span></td>
+          <td style="font-size:11px;color:#8b949e;">Charter hub of the Valley; Sacramento City USD ~22% charter; Highlands Community Charter collapse in 2025 removed ~12K students from rolls; many CMO-operated schools</td>
+        </tr>
+
+        <!-- ─── SAN JOAQUIN VALLEY NORTH ─── -->
+        <tr><td colspan="7" style="padding:0;">
+          <div class="region-strip strip-sjvalley">⬇ San Joaquin Valley</div>
+        </td></tr>
+
+        <tr>
+          <td><div class="county-name">San Joaquin</div><div class="county-sub">Stockton, Tracy, Lodi, Manteca</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">155,659</td>
+          <td class="charter-cell">~9,300</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:46%;"></div></div>
+              <span class="pct-num c-lo">~6%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Modest</span></td>
+          <td style="font-size:11px;color:#8b949e;">Stockton USD is a reluctant authorizer; CA Virtual Academy @ SJ; Tracy charter community schools growing; Delta Charter network</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Stanislaus</div><div class="county-sub">Modesto, Turlock, Ceres</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">107,205</td>
+          <td class="charter-cell">~5,400</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:38%;"></div></div>
+              <span class="pct-num c-lo">~5%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Modesto City Schools is dominant district; Connecting Waters (Modesto branch); few locally authorized charters; mostly IS models</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Merced</div><div class="county-sub">Merced, Los Banos, Atwater</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">59,478</td>
+          <td class="charter-cell">~3,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:38%;"></div></div>
+              <span class="pct-num c-lo">~5%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Agricultural county with limited charter activity; some UCMerced-linked early education experiments; primarily traditional public schools</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Madera</div><div class="county-sub">Madera, Chowchilla</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">~26,000</td>
+          <td class="charter-cell">~950</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-xlo" style="width:28%;"></div></div>
+              <span class="pct-num c-xlo">~3.7%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-dn">↓ Declining</span></td>
+          <td style="font-size:11px;color:#8b949e;">Low charter penetration; one of the fastest-growing counties by total enrollment but slow charter adoption; Madera USD is the major operator</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Fresno</div><div class="county-sub">Fresno, Clovis, Sanger, Reedley</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">206,465</td>
+          <td class="charter-cell">~13,500</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-lo" style="width:54%;"></div></div>
+              <span class="pct-num c-lo">~6.5%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Modest</span></td>
+          <td style="font-size:11px;color:#8b949e;">36 charters countywide; Fresno USD &lt;5%; Clovis USD authorizes zero charters; University HS is the marquee; Golden Charter Academy (new); IS charters in rural areas</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Kings</div><div class="county-sub">Hanford, Lemoore, Corcoran</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">~35,200</td>
+          <td class="charter-cell">~1,400</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-xlo" style="width:30%;"></div></div>
+              <span class="pct-num c-xlo">~4%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Predominantly agricultural; highest birth rate county in CA but lowest charter uptake; Mid Valley Charter (multi-county IS) is primary option</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Tulare</div><div class="county-sub">Visalia, Tulare, Porterville, Dinuba</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">102,924</td>
+          <td class="charter-cell">~4,600</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-xlo" style="width:34%;"></div></div>
+              <span class="pct-num c-xlo">~4.5%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-flat">→ Flat</span></td>
+          <td style="font-size:11px;color:#8b949e;">Valley Oak Charter; rural IS models; Visalia USD and Tulare City SD are traditional gatekeepers; some farmworker-family-targeted charters</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">★ Kern</div><div class="county-sub">Bakersfield, Delano, Tehachapi</div></td>
+          <td><span class="region-pill pill-sjv">SJ Valley</span></td>
+          <td class="enroll-cell">198,992</td>
+          <td class="charter-cell">~23,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-hi" style="width:87%;"></div></div>
+              <span class="pct-num c-hi">~15%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ 3× in 10 yrs</span></td>
+          <td style="font-size:11px;color:#8b949e;">Valley anomaly: nearly tripled from 7,341 in 2014-15 to 23,000+ in 2024-25; driven by nonclassroom-based IS charters serving rural/agricultural families; Kern HS District is major growth engine</td>
+        </tr>
+
+        <!-- Statewide avg row -->
+        <tr class="avg-row">
+          <td>▶ California Statewide Avg</td>
+          <td>—</td>
+          <td class="enroll-cell">5,806,221</td>
+          <td class="charter-cell">~725,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill" style="width:62.5%;background:#6e7681;"></div></div>
+              <span class="pct-num" style="color:#8b949e;">~12.5%</span>
+            </div>
+          </td>
+          <td>—</td>
+          <td style="font-size:11px;color:#6e7681;">State baseline for comparison</td>
+        </tr>
+
+        <!-- Comparison counties -->
+        <tr><td colspan="7" style="padding:0;">
+          <div class="region-strip strip-compare">— Comparison: Other Major California Counties —</div>
+        </td></tr>
+
+        <tr>
+          <td><div class="county-name">Alameda (Oakland)</div><div class="county-sub">Bay Area</div></td>
+          <td><span class="region-pill pill-compare">Bay Area</span></td>
+          <td class="enroll-cell">~230,000</td>
+          <td class="charter-cell">~64,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-vhi" style="width:100%;"></div></div>
+              <span class="pct-num c-vhi">~28%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ Major</span></td>
+          <td style="font-size:11px;color:#8b949e;">Oakland is the charter epicenter; 30% of Oakland students in charters; large CMO presence (KIPP, Aspire, Amethod)</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Los Angeles</div><div class="county-sub">SoCal</div></td>
+          <td><span class="region-pill pill-compare">SoCal</span></td>
+          <td class="enroll-cell">1,275,769</td>
+          <td class="charter-cell">~220,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-hi" style="width:86%;"></div></div>
+              <span class="pct-num c-hi">~17%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ Major</span></td>
+          <td style="font-size:11px;color:#8b949e;">Largest raw number; LAUSD ~24% charter; Granada Hills Charter is largest single charter in US; LA is the national charter capital by student count</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">San Diego</div><div class="county-sub">SoCal</div></td>
+          <td><span class="region-pill pill-compare">SoCal</span></td>
+          <td class="enroll-cell">476,844</td>
+          <td class="charter-cell">~67,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-hi" style="width:70%;"></div></div>
+              <span class="pct-num c-hi">~14%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up">↑ Moderate</span></td>
+          <td style="font-size:11px;color:#8b949e;">High-quality charter sector; High Tech High is the flagship; Dehesa Elementary District became a charter superauth with 8,500+ charter students</td>
+        </tr>
+
+        <tr>
+          <td><div class="county-name">Riverside</div><div class="county-sub">Inland Empire</div></td>
+          <td><span class="region-pill pill-compare">IE</span></td>
+          <td class="enroll-cell">419,992</td>
+          <td class="charter-cell">~34,000</td>
+          <td>
+            <div class="pct-wrap">
+              <div class="bar-mini"><div class="bar-fill t-hi" style="width:65%;"></div></div>
+              <span class="pct-num c-hi">~13%</span>
+            </div>
+          </td>
+          <td><span class="trend-badge t-up3">↑ 1.8× in 10 yrs</span></td>
+          <td style="font-size:11px;color:#8b949e;">Springs Charter serves thousands of home-learners; Coachella Valley charters growing; IS models popular with growing Latino families</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Key findings -->
+  <div class="section">
+    <div class="section-label">Key Findings — Extended Valley Corridor</div>
+
+    <div class="finding">
+      <h3>The North State is an outlier — higher than expected</h3>
+      <p>Shasta County (Redding), Butte County (Chico), and Placer County (Roseville/Rocklin) all run at roughly 11%, near the state average — significantly higher than most of the San Joaquin Valley to their south. Shasta has over 10 active charter schools for a county of only 26,000 students, including a robust independent-study sector that serves families across multiple northern counties. This reflects the cultural independence and homeschool-friendly orientation common in rural Northern California.</p>
+    </div>
+
+    <div class="finding">
+      <h3>The Sacramento Metro drives Valley charter numbers</h3>
+      <p>Sacramento County at ~16% is by far the largest charter market in the extended Valley corridor, with ~40,000 charter students. Sacramento City Unified alone operates at roughly 22% charter share. The 2025 collapse of Highlands Community Charter (which lost thousands of students after a state audit) significantly reduced Sacramento's numbers — without that event, the county would be closer to 20%.</p>
+    </div>
+
+    <div class="finding">
+      <h3>The San Joaquin Valley core is the weakest charter region</h3>
+      <p>Stanislaus, Merced, Madera, and Kings counties all cluster in the 3.5–5% range — the lowest in the state outside of tiny rural counties. Fresno, despite being California's third-largest school district, stays below 7% because Fresno USD and Clovis USD (together serving ~115,000 students) authorize almost no charters. This isn't student disinterest — it's structural gatekeeper behavior by powerful traditional districts.</p>
+    </div>
+
+    <div class="finding">
+      <h3>Kern County is a structural outlier — and a preview of future growth</h3>
+      <p>Kern County at ~15% breaks dramatically from its San Joaquin Valley neighbors. Having tripled its charter enrollment over ten years from 7,341 to 23,000+ students, Kern demonstrates what can happen when nonclassroom-based independent study charters find fertile ground: large rural geography, agricultural families who value schedule flexibility, and a county office that was more permissive than neighboring counties. Kern's trajectory suggests other SJV counties could follow if policy barriers ease.</p>
+    </div>
+
+    <div class="finding">
+      <h3>Glenn and Colusa are near-zero charter counties</h3>
+      <p>With enrollments of ~6,500 and 4,613 respectively, these tiny agricultural counties have almost no locally-authorized charter schools. Students from these counties who do attend charters typically enroll in multi-county independent study programs authorized elsewhere (like Phoenix Charter out of Shasta or Connecting Waters out of Modesto). This is unlikely to change without significant population or policy shifts.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Summary regional comparison -->
+  <div class="section">
+    <div class="section-label">Regional Charter Share Summary — Extended Valley vs. Comparison</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Counties Included</th>
+          <th>Combined Enrollment</th>
+          <th>Avg Charter Share</th>
+          <th>Range</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="county-name">North State</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">Shasta, Tehama</td>
+          <td class="enroll-cell">37,326</td>
+          <td><span class="pct-num c-mid">~9%</span></td>
+          <td style="font-size:11px;color:#6e7681;">6–11%</td>
+        </tr>
+        <tr>
+          <td><div class="county-name">N. Sacramento Valley</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">Butte, Glenn, Colusa</td>
+          <td class="enroll-cell">~41,000</td>
+          <td><span class="pct-num c-lo">~7%</span></td>
+          <td style="font-size:11px;color:#6e7681;">2.5–11%</td>
+        </tr>
+        <tr>
+          <td><div class="county-name">Sacramento Metro</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">Sutter, Yuba, Placer, Yolo, Sacramento</td>
+          <td class="enroll-cell">~406,000</td>
+          <td><span class="pct-num c-hi">~13%</span></td>
+          <td style="font-size:11px;color:#6e7681;">6–16%</td>
+        </tr>
+        <tr>
+          <td><div class="county-name">San Joaquin Valley (N)</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">San Joaquin, Stanislaus, Merced</td>
+          <td class="enroll-cell">322,342</td>
+          <td><span class="pct-num c-lo">~5.5%</span></td>
+          <td style="font-size:11px;color:#6e7681;">5–6%</td>
+        </tr>
+        <tr>
+          <td><div class="county-name">San Joaquin Valley (S)</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">Fresno, Madera, Kings, Tulare, Kern</td>
+          <td class="enroll-cell">569,581</td>
+          <td><span class="pct-num c-lo">~7%</span></td>
+          <td style="font-size:11px;color:#6e7681;">3.7–15%</td>
+        </tr>
+        <tr class="avg-row">
+          <td>Extended Valley Total</td>
+          <td style="font-size:11.5px;color:#8b949e;">All 18 counties above</td>
+          <td class="enroll-cell">~1.38M</td>
+          <td><span class="pct-num" style="color:#d29922;">~8.5%</span></td>
+          <td style="font-size:11px;color:#6e7681;">2.5–16%</td>
+        </tr>
+        <tr>
+          <td><div class="county-name">Bay Area + LA + SD</div><div class="county-sub">Comparison group</div></td>
+          <td style="font-size:11.5px;color:#8b949e;">Alameda, LA, San Diego, Riverside</td>
+          <td class="enroll-cell">~2.4M</td>
+          <td><span class="pct-num c-vhi">~18%</span></td>
+          <td style="font-size:11px;color:#6e7681;">13–28%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    SOURCES: Ed-Data county enrollment totals (2024–25 from ed-data.org); California Policy Center 10-year charter trend analysis (Aug. 2025); CDE CalEdFacts on Charter Schools; Shasta COE charter school list; PPIC "California's K–12 Students" (Jan. 2026); CalMatters charter enrollment analysis. Charter student counts are estimates derived from total enrollment figures and known/estimated charter school counts using CDE school directory data, county office records, and published California Policy Center county-level charter growth data. For exact charter vs. non-charter enrollment splits, use CDE DataQuest: dq.cde.ca.gov → Charter/Non-Charter enrollment by county/year. ★ denotes counties exceeding state average. All enrollment figures are 2024–25 except Butte (2023–24), Yuba (2023–24), Sutter (2023–24), Glenn (2023–24).
+  </div>
+
+</div>
+</body>
+</html>
